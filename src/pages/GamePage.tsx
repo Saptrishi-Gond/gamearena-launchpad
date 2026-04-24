@@ -24,7 +24,7 @@ export default function GamePage() {
     if (!slug || !meta) return;
     document.title = `${meta.name} Tournaments — BattleArena`;
     setLoading(true);
-    supabase.from("tournaments").select("*").eq("game", slug).order("match_at")
+    supabase.from("tournaments").select("*").eq("game", slug as "freefire" | "bgmi" | "fc").order("match_at")
       .then(({ data }) => { setTournaments(data ?? []); setLoading(false); });
   }, [slug, meta]);
 
