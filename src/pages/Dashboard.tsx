@@ -79,6 +79,12 @@ export default function Dashboard() {
           </Card>
         </div>
 
+        <div className="flex flex-wrap gap-2 mb-10">
+          <Link to="/rewards"><Button variant="neon" size="sm"><Gift className="h-4 w-4" /> My Rewards</Button></Link>
+          <Link to="/support"><Button variant="outline" size="sm"><MessageSquare className="h-4 w-4" /> Support</Button></Link>
+          <Link to="/games/freefire"><Button variant="hero" size="sm">Find a match</Button></Link>
+        </div>
+
         <h2 className="font-display text-2xl font-bold uppercase mb-4">Upcoming Matches</h2>
         {upcoming.length === 0 ? (
           <p className="text-muted-foreground mb-10">No upcoming battles. Go enter one!</p>
