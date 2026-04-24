@@ -20,7 +20,13 @@ export default function Auth() {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => { if (user) navigate("/dashboard"); }, [user, navigate]);
+  useEffect(() => {
+    if (!user) return;
+    // Send to onboarding if not yet onboarded
+    supabase.from("profiles").select("onboarded").eq("id", user.id).maybeSingle().then(({ data }) => {
+      navigate(data?.onboarded ? "/dashboard" : "/onboarding", { replace: true });
+    });
+  }, [user, navigate]);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
