@@ -5,9 +5,10 @@ import { Navbar } from "@/components/Navbar";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Coins, Trophy, Calendar, Lock, Unlock } from "lucide-react";
+import { Coins, Trophy, Calendar, Lock, Unlock, Gift, MessageSquare } from "lucide-react";
 import { format, differenceInMinutes } from "date-fns";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
