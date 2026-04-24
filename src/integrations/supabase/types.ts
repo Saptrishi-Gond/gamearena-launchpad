@@ -14,16 +14,225 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          checked_in_at: string | null
+          created_at: string
+          id: string
+          in_game_id: string | null
+          status: Database["public"]["Enums"]["booking_status"]
+          tournament_id: string
+          user_id: string
+        }
+        Insert: {
+          checked_in_at?: string | null
+          created_at?: string
+          id?: string
+          in_game_id?: string | null
+          status?: Database["public"]["Enums"]["booking_status"]
+          tournament_id: string
+          user_id: string
+        }
+        Update: {
+          checked_in_at?: string | null
+          created_at?: string
+          id?: string
+          in_game_id?: string | null
+          status?: Database["public"]["Enums"]["booking_status"]
+          tournament_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          read: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          read?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          game_id_bgmi: string | null
+          game_id_fc: string | null
+          game_id_freefire: string | null
+          id: string
+          updated_at: string
+          username: string | null
+          wallet_coins: number
+          xp: number
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          game_id_bgmi?: string | null
+          game_id_fc?: string | null
+          game_id_freefire?: string | null
+          id: string
+          updated_at?: string
+          username?: string | null
+          wallet_coins?: number
+          xp?: number
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          game_id_bgmi?: string | null
+          game_id_fc?: string | null
+          game_id_freefire?: string | null
+          id?: string
+          updated_at?: string
+          username?: string | null
+          wallet_coins?: number
+          xp?: number
+        }
+        Relationships: []
+      }
+      tournaments: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          entry_fee: number
+          game: Database["public"]["Enums"]["game_type"]
+          id: string
+          match_at: string
+          prize_pool: number
+          room_id: string | null
+          room_password: string | null
+          slots_left: number
+          status: Database["public"]["Enums"]["tournament_status"]
+          title: string
+          total_slots: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          entry_fee?: number
+          game: Database["public"]["Enums"]["game_type"]
+          id?: string
+          match_at: string
+          prize_pool?: number
+          room_id?: string | null
+          room_password?: string | null
+          slots_left: number
+          status?: Database["public"]["Enums"]["tournament_status"]
+          title: string
+          total_slots: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          entry_fee?: number
+          game?: Database["public"]["Enums"]["game_type"]
+          id?: string
+          match_at?: string
+          prize_pool?: number
+          room_id?: string | null
+          room_password?: string | null
+          slots_left?: number
+          status?: Database["public"]["Enums"]["tournament_status"]
+          title?: string
+          total_slots?: number
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallet_logs: {
+        Row: {
+          created_at: string
+          delta: number
+          id: string
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          delta: number
+          id?: string
+          reason: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          delta?: number
+          id?: string
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      book_tournament: {
+        Args: { _in_game_id: string; _tournament_id: string }
+        Returns: string
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      booking_status: "confirmed" | "checked_in" | "cancelled" | "won" | "lost"
+      game_type: "freefire" | "bgmi" | "fc"
+      tournament_status: "upcoming" | "live" | "completed" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +359,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      booking_status: ["confirmed", "checked_in", "cancelled", "won", "lost"],
+      game_type: ["freefire", "bgmi", "fc"],
+      tournament_status: ["upcoming", "live", "completed", "cancelled"],
+    },
   },
 } as const
