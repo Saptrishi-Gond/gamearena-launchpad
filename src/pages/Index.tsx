@@ -1,377 +1,233 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { motion } from "framer-motion";
-import {
-  BarChart3, Trophy, Search, SlidersHorizontal, Calendar, Users, X,
-  TrendingUp, Radio, Flame,
-} from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { ArrowRight, Trophy, Star, Zap, Crown, Shield, Quote } from "lucide-react";
 import ffImg from "@/assets/game-freefire.jpg";
 import bgmiImg from "@/assets/game-bgmi.jpg";
 import fcImg from "@/assets/game-fc.jpg";
 
-type Tab = "active" | "upcoming" | "completed" | "mine";
-
-const TABS: { id: Tab; label: string }[] = [
-  { id: "active", label: "Active" },
-  { id: "upcoming", label: "Upcoming" },
-  { id: "completed", label: "Completed" },
-  { id: "mine", label: "My Registrations" },
+const portals = [
+  { slug: "freefire", title: "Free Fire Elite", img: ffImg, tag: "Battle Royale" },
+  { slug: "bgmi", title: "BGMI Masters", img: bgmiImg, tag: "Tactical FPS" },
+  { slug: "fc", title: "FC Pro League", img: fcImg, tag: "1v1 Football" },
 ];
 
-const FILTERS = [
-  { k: "FORMAT", v: "SQUAD" },
-  { k: "ENTRY", v: "₹0 - ₹500" },
-  { k: "REGION", v: "ASIA-SOUTH" },
+const live = [
+  { title: "Titan Clash", code: "S5-FF", prize: "₹50K", time: "TONIGHT" },
+  { title: "Neon Strike", code: "NS-BGMI", prize: "₹1.2L", time: "22 OCT" },
+  { title: "Vortex Open", code: "VO-FC", prize: "₹75K", time: "TOMORROW" },
+  { title: "Iron Fist", code: "IF-FF", prize: "₹30K", time: "FRI 9PM" },
 ];
 
-type Card = {
-  id: string;
-  badge: { label: string; tone: "live" | "open" | "pro" };
-  title: string;
-  image: string;
-  prize: string;
-  fee: string;
-  feeFree?: boolean;
-  date: string;
-  slots: string;
-  progress: number;
-  cta: string;
-  ctaTone: "primary" | "muted";
-};
-
-const CARDS: Card[] = [
-  {
-    id: "1",
-    badge: { label: "● LIVE", tone: "live" },
-    title: "TITAN CLASH SERIES",
-    image: ffImg,
-    prize: "₹50,000",
-    fee: "FREE",
-    feeFree: true,
-    date: "Today, 08:30 PM",
-    slots: "120/128 Slots",
-    progress: 94,
-    cta: "JOIN NOW",
-    ctaTone: "primary",
-  },
-  {
-    id: "2",
-    badge: { label: "REGISTRATION OPEN", tone: "open" },
-    title: "NEON STRIKE MASTERS",
-    image: bgmiImg,
-    prize: "₹1,20,000",
-    fee: "₹100",
-    date: "22 Oct, 10:00 PM",
-    slots: "45/100 Squads",
-    progress: 45,
-    cta: "REGISTER NOW",
-    ctaTone: "muted",
-  },
-  {
-    id: "3",
-    badge: { label: "PRO CIRCUIT", tone: "pro" },
-    title: "VORTEX ELITE OPEN",
-    image: fcImg,
-    prize: "₹75,000",
-    fee: "₹50",
-    date: "Tomorrow, 09:00 PM",
-    slots: "12/32 Teams",
-    progress: 38,
-    cta: "JOIN NOW",
-    ctaTone: "primary",
-  },
+const steps = [
+  { i: Shield, t: "Create Account", d: "Sign up in seconds, claim 100 starter coins" },
+  { i: Zap, t: "Book Tournament", d: "Pick game, time, stakes — confirm with coins" },
+  { i: Crown, t: "Drop & Dominate", d: "Outplay, win prizes, climb global ranks" },
 ];
 
-const badgeStyles: Record<Card["badge"]["tone"], string> = {
-  live: "bg-secondary text-secondary-foreground",
-  open: "bg-accent/90 text-accent-foreground",
-  pro: "bg-neon-yellow text-background",
-};
+const podium = [
+  { rank: 2, name: "VORTEX_V01", score: "15,640", color: "from-primary/30", h: "h-28", glow: "ring-2 ring-primary/40" },
+  { rank: 1, name: "NEON_WAVE", score: "16,820", color: "from-neon-yellow/40", h: "h-40", glow: "ring-2 ring-neon-yellow/60" },
+  { rank: 3, name: "ROGUE_X", score: "14,295", color: "from-secondary/30", h: "h-20", glow: "ring-2 ring-secondary/40" },
+];
+
+const tests = [
+  { n: "Aryan K.", r: "Free Fire · Diamond IV", q: "Won ₹5K in my first week. Cleanest payouts I've seen." },
+  { n: "Priya S.", r: "BGMI · Crown II", q: "Room IDs always on time. No drama, just competition." },
+  { n: "Rohan M.", r: "FC Mobile · Pro", q: "UI feels like a AAA game. Better than anything else." },
+];
 
 export default function Index() {
-  const [tab, setTab] = useState<Tab>("active");
-  const [query, setQuery] = useState("");
-  const [filters, setFilters] = useState(FILTERS);
-
   useEffect(() => {
-    document.title = "BattleArena — Free Fire Tournaments";
+    document.title = "BattleArena — Conquer The World";
     const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "Free Fire battle royale tournaments. Cash prizes. Daily matches. Register now.");
+    if (meta) meta.setAttribute("content", "Premium mobile esports arena. Free Fire, BGMI, FC tournaments. Real prizes, daily.");
   }, []);
-
-  const visible = useMemo(
-    () => CARDS.filter((c) => c.title.toLowerCase().includes(query.toLowerCase())),
-    [query]
-  );
 
   return (
     <div className="min-h-screen">
       <Navbar />
 
       {/* HERO */}
-      <section className="relative overflow-hidden">
-        {/* Teal radial glow background */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,hsl(180_60%_25%/0.55),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_20%,hsl(200_70%_30%/0.4),transparent_55%)]" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/30 to-background" />
-        </div>
+      <section className="relative">
+        <div className="absolute inset-0 -z-10 bg-gradient-hero" />
+        <div className="container py-24 md:py-32 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+            className="inline-block text-[11px] uppercase tracking-[0.4em] text-muted-foreground mb-5"
+          >
+            ── Underground Series ──
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
+            className="font-display italic text-6xl md:text-8xl uppercase leading-[0.95] tracking-tight max-w-4xl mx-auto"
+          >
+            Conquer The World<br />With Your Hand
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+            className="mt-6 text-base md:text-lg text-muted-foreground max-w-xl mx-auto"
+          >
+            Choose your arena. Book tournaments. Win rewards. Rise to glory.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+            className="mt-8 flex flex-wrap items-center justify-center gap-3"
+          >
+            <Link to="/games" className="pill-btn">Explore Games</Link>
+            <Link to="/auth?mode=signup" className="pill-ghost">Join Free</Link>
+            <Link to="/leaderboard" className="pill-ghost">Watch Live</Link>
+          </motion.div>
 
-        <div className="container relative py-20 md:py-28">
-          <div className="flex gap-6">
-            {/* Side icon rail */}
-            <div className="hidden md:flex flex-col gap-3 pt-12">
-              {[BarChart3, Trophy, Search].map((Icon, i) => (
-                <button
-                  key={i}
-                  className="h-10 w-10 rounded-md bg-muted/40 border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/60 transition-all"
-                >
-                  <Icon className="h-4 w-4" />
-                </button>
-              ))}
-            </div>
-
-            <div className="flex-1">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="flex items-center gap-3 mb-4"
-              >
-                <div className="h-px w-10 bg-accent/70" />
-                <span className="font-display text-[11px] uppercase tracking-[0.35em] text-accent">
-                  Battle Royale Premiere
-                </span>
-              </motion.div>
-
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.1 }}
-                className="font-display italic font-black text-6xl md:text-8xl lg:text-9xl uppercase leading-[0.9] tracking-tight"
-                style={{ textShadow: "0 4px 40px hsl(180 100% 50% / 0.15)" }}
-              >
-                Free Fire
-              </motion.h1>
-
-              {/* Stats row */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="mt-10 flex flex-wrap gap-x-12 gap-y-6"
-              >
-                <Stat
-                  label="Active Warriors"
-                  value="2,890"
-                  badge={
-                    <span className="inline-flex items-center gap-1.5 text-[10px] font-display uppercase tracking-wider text-secondary">
-                      <Radio className="h-3 w-3" /> Live
-                    </span>
-                  }
-                />
-                <Stat label="Total Prize Pool" value="₹25,00,000+" valueClass="text-accent" />
-                <Stat
-                  label="Global Rank"
-                  value="#12"
-                  badge={
-                    <span className="inline-flex items-center gap-1 text-accent">
-                      <TrendingUp className="h-4 w-4" />
-                    </span>
-                  }
-                />
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* TABS + SEARCH */}
-      <section className="container -mt-4 md:-mt-2 pb-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-2 bg-card/40 border border-border p-1.5 rounded-md w-fit">
-            {TABS.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setTab(t.id)}
-                className={`px-4 md:px-5 py-2 font-display text-xs md:text-sm uppercase tracking-wider rounded-sm transition-all ${
-                  tab === t.id
-                    ? "bg-accent/15 text-accent border border-accent/40 shadow-[0_0_20px_hsl(180_100%_50%/0.2)]"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {t.label}
-              </button>
+          <div className="mt-14 grid grid-cols-4 gap-6 max-w-2xl mx-auto">
+            {[
+              { v: "50K+", l: "Players" },
+              { v: "₹5L+", l: "Rewards" },
+              { v: "12K+", l: "Matches" },
+              { v: "99%", l: "Trust" },
+            ].map((s) => (
+              <div key={s.l}>
+                <div className="font-display text-3xl md:text-4xl text-primary">{s.v}</div>
+                <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mt-1">{s.l}</div>
+              </div>
             ))}
           </div>
-
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1 lg:w-80">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search Tournament Name..."
-                className="pl-9 bg-card/40 border-border h-10 rounded-md font-body"
-              />
-            </div>
-            <button className="h-10 w-10 inline-flex items-center justify-center bg-card/40 border border-border rounded-md text-muted-foreground hover:text-accent hover:border-accent/50 transition-all">
-              <SlidersHorizontal className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Filter chips */}
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          {filters.map((f) => (
-            <button
-              key={f.k}
-              onClick={() => setFilters(filters.filter((x) => x.k !== f.k))}
-              className="group inline-flex items-center gap-2 px-3 py-1.5 bg-muted/30 border border-border rounded-full text-xs font-display uppercase tracking-wider hover:border-accent/40 transition-colors"
-            >
-              <span className="text-muted-foreground">{f.k}:</span>
-              <span className="text-foreground">{f.v}</span>
-              <X className="h-3 w-3 text-muted-foreground group-hover:text-accent" />
-            </button>
-          ))}
-          {filters.length > 0 && (
-            <button
-              onClick={() => setFilters([])}
-              className="text-xs font-display uppercase tracking-wider text-accent hover:underline ml-1"
-            >
-              Clear All
-            </button>
-          )}
         </div>
       </section>
 
-      {/* CARDS */}
-      <section className="container pb-24">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {visible.map((c, i) => (
-            <TournamentCardV2 key={c.id} card={c} index={i} />
+      {/* PORTALS */}
+      <section className="container pb-16">
+        <div className="grid md:grid-cols-3 gap-5">
+          {portals.map((p, i) => (
+            <motion.div
+              key={p.slug}
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+            >
+              <Link
+                to={`/games/${p.slug}`}
+                className="group relative block aspect-[4/5] rounded-xl overflow-hidden border border-border hover:border-primary/50 transition-all"
+              >
+                <img src={p.img} alt={p.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <div className="text-[10px] uppercase tracking-[0.3em] text-primary mb-2">{p.tag}</div>
+                  <h3 className="font-display italic text-3xl uppercase">{p.title}</h3>
+                  <div className="mt-3 inline-flex items-center gap-1.5 text-sm text-foreground/80 group-hover:text-primary transition-colors">
+                    Enter Arena <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* LIVE TOURNAMENTS STRIP */}
+      <section className="container pb-20">
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-secondary animate-pulse" />
+            <h2 className="font-display text-2xl uppercase tracking-wide">Live Tournaments</h2>
+          </div>
+          <Link to="/games/freefire" className="text-xs uppercase tracking-wider text-primary hover:underline">View All →</Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {live.map((l, i) => (
+            <motion.div
+              key={l.code}
+              initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ delay: i * 0.06 }}
+              className="surface-1 border border-border rounded-lg p-4 hover:border-primary/40 hover:-translate-y-1 transition-all"
+            >
+              <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-2">{l.code}</div>
+              <h3 className="font-display italic text-lg uppercase">{l.title}</h3>
+              <div className="mt-3 flex items-center justify-between text-xs">
+                <span className="text-primary font-semibold">{l.prize}</span>
+                <span className="text-muted-foreground">{l.time}</span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* PATH TO GLORY */}
+      <section className="container py-16">
+        <h2 className="text-center font-display italic text-4xl md:text-5xl uppercase mb-12">The Path To Glory</h2>
+        <div className="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto">
+          {steps.map((s, i) => (
+            <motion.div
+              key={s.t}
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="text-center surface-1 border border-border rounded-xl p-7"
+            >
+              <div className="mx-auto h-14 w-14 rounded-full bg-primary/15 border border-primary/30 grid place-items-center mb-4">
+                <s.i className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-display text-xl uppercase">{s.t}</h3>
+              <p className="text-sm text-muted-foreground mt-2">{s.d}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* GLOBAL CHAMPIONS */}
+      <section className="container py-16">
+        <h2 className="text-center font-display italic text-4xl md:text-5xl uppercase mb-12">Global Champions</h2>
+        <div className="max-w-3xl mx-auto grid grid-cols-3 gap-3 md:gap-6 items-end">
+          {podium.map((p) => (
+            <motion.div
+              key={p.rank}
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              className="text-center"
+            >
+              <div className={`mx-auto mb-3 h-16 w-16 md:h-20 md:w-20 rounded-full bg-gradient-to-br ${p.color} to-transparent grid place-items-center ${p.glow}`}>
+                {p.rank === 1 ? <Crown className="h-8 w-8 text-neon-yellow" /> : <Trophy className="h-7 w-7 text-primary" />}
+              </div>
+              <div className="font-display text-lg uppercase">{p.name}</div>
+              <div className="text-xs text-muted-foreground">{p.score} XP</div>
+              <div className={`mt-3 ${p.h} bg-gradient-to-t ${p.color} to-transparent border-t border-border rounded-t-md grid place-items-start justify-center pt-2`}>
+                <span className="font-display text-3xl md:text-5xl text-primary">#{p.rank}</span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+        <div className="mt-8 text-center">
+          <Link to="/leaderboard" className="pill-ghost inline-flex">View Full Hall of Fame <ArrowRight className="h-4 w-4" /></Link>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="container py-16">
+        <div className="grid md:grid-cols-3 gap-5">
+          {tests.map((t, i) => (
+            <motion.div
+              key={t.n}
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              className="surface-1 border border-border rounded-xl p-6"
+            >
+              <div className="flex gap-0.5 mb-3">
+                {[1,2,3,4,5].map(s => <Star key={s} className="h-3.5 w-3.5 text-primary fill-primary" />)}
+              </div>
+              <Quote className="h-5 w-5 text-primary/40 mb-2" />
+              <p className="text-sm text-foreground/90 mb-5 leading-relaxed">"{t.q}"</p>
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-full bg-gradient-primary grid place-items-center font-display text-primary-foreground">{t.n[0]}</div>
+                <div>
+                  <div className="font-display text-sm uppercase">{t.n}</div>
+                  <div className="text-xs text-muted-foreground">{t.r}</div>
+                </div>
+              </div>
+            </motion.div>
           ))}
         </div>
       </section>
 
       <Footer />
     </div>
-  );
-}
-
-function Stat({
-  label,
-  value,
-  valueClass = "",
-  badge,
-}: {
-  label: string;
-  value: string;
-  valueClass?: string;
-  badge?: React.ReactNode;
-}) {
-  return (
-    <div>
-      <div className="font-display text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-1.5">
-        {label}
-      </div>
-      <div className="flex items-baseline gap-2">
-        <span className={`font-display text-3xl md:text-4xl font-black ${valueClass}`}>
-          {value}
-        </span>
-        {badge}
-      </div>
-    </div>
-  );
-}
-
-function TournamentCardV2({ card, index }: { card: Card; index: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.08 }}
-      className="group relative bg-card/60 border border-border rounded-lg overflow-hidden hover:border-accent/40 hover:-translate-y-1 transition-all duration-300"
-    >
-      {/* Image header */}
-      <div className="relative aspect-[16/9] overflow-hidden">
-        <img
-          src={card.image}
-          alt={card.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
-
-        {/* Badge */}
-        <div className="absolute top-3 left-3">
-          <span
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-display font-bold uppercase tracking-wider ${badgeStyles[card.badge.tone]}`}
-          >
-            {card.badge.label}
-          </span>
-        </div>
-
-        {/* Title overlay */}
-        <h3 className="absolute bottom-3 left-4 right-4 font-display italic font-black text-xl md:text-2xl uppercase tracking-tight">
-          {card.title}
-        </h3>
-      </div>
-
-      {/* Body */}
-      <div className="p-4 space-y-4">
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <div className="text-[10px] font-display uppercase tracking-[0.2em] text-muted-foreground mb-1">
-              Prize Pool
-            </div>
-            <div className="font-display text-lg font-black text-accent">{card.prize}</div>
-          </div>
-          <div className="text-right">
-            <div className="text-[10px] font-display uppercase tracking-[0.2em] text-muted-foreground mb-1">
-              Entry Fee
-            </div>
-            <div
-              className={`font-display text-lg font-black ${
-                card.feeFree ? "text-foreground" : "text-foreground"
-              }`}
-            >
-              {card.fee}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border pt-3">
-          <span className="inline-flex items-center gap-1.5">
-            <Calendar className="h-3.5 w-3.5" /> {card.date}
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <Users className="h-3.5 w-3.5" /> {card.slots}
-          </span>
-        </div>
-
-        {/* Progress */}
-        <div className="h-1 bg-muted/50 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-accent to-primary"
-            style={{ width: `${card.progress}%` }}
-          />
-        </div>
-
-        <button
-          className={`w-full py-2.5 rounded-md font-display text-sm font-bold uppercase tracking-wider transition-all ${
-            card.ctaTone === "primary"
-              ? "bg-accent/20 text-accent border border-accent/40 hover:bg-accent hover:text-accent-foreground"
-              : "bg-muted/40 text-foreground border border-border hover:bg-muted/60"
-          }`}
-        >
-          {card.cta}
-        </button>
-      </div>
-    </motion.div>
   );
 }

@@ -12,8 +12,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Orbitron", "sans-serif"],
-        body: ["Rajdhani", "sans-serif"],
+        display: ["Anton", "Bebas Neue", "sans-serif"],
+        body: ["Inter", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -29,10 +29,12 @@ export default {
         popover: { DEFAULT: "hsl(var(--popover))", foreground: "hsl(var(--popover-foreground))" },
         card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
         neon: {
-          orange: "hsl(var(--neon-orange))",
-          red: "hsl(var(--neon-red))",
+          blue: "hsl(var(--neon-blue))",
           cyan: "hsl(var(--neon-cyan))",
           yellow: "hsl(var(--neon-yellow))",
+          red: "hsl(var(--neon-red))",
+          green: "hsl(var(--neon-green))",
+          purple: "hsl(var(--neon-purple))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
