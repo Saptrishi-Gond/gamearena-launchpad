@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { BackButton } from "@/components/BackButton";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -57,6 +59,7 @@ export default function Support() {
     <div className="min-h-screen">
       <Navbar />
       <div className="container py-10">
+        <BackButton to="/dashboard" label="Dashboard" className="mb-4 -ml-3" />
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="font-display text-4xl font-black uppercase">Support</h1>
@@ -122,6 +125,7 @@ export default function Support() {
           </DialogContent>
         </Dialog>
       </div>
+      <Footer />
     </div>
   );
 }
