@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { BackButton } from "@/components/BackButton";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,6 +46,7 @@ export default function Dashboard() {
     <div className="min-h-screen">
       <Navbar />
       <div className="container py-10">
+        <BackButton to="/" label="Home" className="mb-4 -ml-3" />
         <h1 className="font-display text-4xl md:text-5xl font-black uppercase mb-2">
           Welcome, <span className="text-primary text-glow">{profile?.username ?? "Warrior"}</span>
         </h1>
@@ -142,6 +145,7 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

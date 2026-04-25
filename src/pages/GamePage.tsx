@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { BackButton } from "@/components/BackButton";
 import { TournamentCard } from "@/components/TournamentCard";
 import { supabase } from "@/integrations/supabase/client";
 import ffImg from "@/assets/game-freefire.jpg";
@@ -43,6 +45,7 @@ export default function GamePage() {
           <div className={`absolute inset-0 bg-gradient-to-t ${meta.accent} via-background/80 to-background`} />
         </div>
         <div className="relative container py-20">
+          <BackButton to="/" label="Home" className="mb-6 -ml-3" />
           <div className="font-display text-xs uppercase tracking-[0.3em] text-primary mb-3">Battlefield</div>
           <h1 className="font-display text-5xl md:text-7xl font-black uppercase text-glow">{meta.name}</h1>
           <p className="text-lg text-muted-foreground mt-4 max-w-xl">{meta.tagline}</p>
@@ -76,6 +79,7 @@ export default function GamePage() {
           </>
         )}
       </section>
+      <Footer />
     </div>
   );
 }
