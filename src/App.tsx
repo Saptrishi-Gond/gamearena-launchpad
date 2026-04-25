@@ -11,6 +11,9 @@ import Dashboard from "./pages/Dashboard.tsx";
 import Rewards from "./pages/Rewards.tsx";
 import Support from "./pages/Support.tsx";
 import GamePage from "./pages/GamePage.tsx";
+import Games from "./pages/Games.tsx";
+import Leaderboard from "./pages/Leaderboard.tsx";
+import TournamentDetail from "./pages/TournamentDetail.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import AdminTournaments from "./pages/admin/AdminTournaments.tsx";
@@ -36,7 +39,10 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/rewards" element={<Rewards />} />
             <Route path="/support" element={<Support />} />
+            <Route path="/games" element={<Games />} />
             <Route path="/games/:slug" element={<GamePage />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/tournament/:id" element={<TournamentDetail />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/tournaments" element={<AdminTournaments />} />
             <Route path="/admin/bookings" element={<AdminBookings />} />
