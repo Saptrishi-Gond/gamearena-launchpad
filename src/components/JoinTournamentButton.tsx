@@ -89,8 +89,11 @@ export function JoinTournamentButton({ tournamentId, game, entryFee = 0, title, 
 
     // Persist game id back to profile for next time (best-effort)
     if (!error && game && parsed.data !== savedId) {
-      const col = game === "bgmi" ? "game_id_bgmi" : game === "fc" ? "game_id_fc" : "game_id_freefire";
-      await supabase.from("profiles").update({ [col]: parsed.data }).eq("id", user!.id);
+      const patch =
+        game === "bgmi" ? { game_id_bgmi: parsed.data } :
+        game === "fc" ? { game_id_fc: parsed.data } :
+        { game_id_freefire: parsed.data };
+      await supabase.from("profiles").update(patch).eq("id", user!.id);
     }
 
     setSubmitting(false);
