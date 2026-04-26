@@ -200,13 +200,22 @@ export default function GamePage() {
                 <div className="h-1 bg-muted/50 rounded-full overflow-hidden">
                   <div className="h-full bg-gradient-primary" style={{ width: `${c.progress}%` }} />
                 </div>
-                <Link to={`/tournament/${c.id}`}
+                <JoinTournamentButton
+                  tournamentId={c.id}
+                  game={(slug as any) ?? "freefire"}
+                  entryFee={c.fee === "FREE" ? 0 : parseInt(c.fee.replace(/[^\d]/g, "")) || 0}
+                  title={c.title}
                   className={`block text-center w-full py-2.5 rounded-full text-sm font-semibold transition-all ${
                     c.ctaTone === "primary"
                       ? "bg-primary text-primary-foreground hover:brightness-110 hover:shadow-glow"
                       : "surface-2 text-foreground border border-border hover:border-primary/40"
                   }`}
-                >{c.cta}</Link>
+                >
+                  {c.cta}
+                </JoinTournamentButton>
+                <Link to={`/tournament/${c.id}`} className="block text-center text-[11px] uppercase tracking-wider text-muted-foreground hover:text-primary mt-2">
+                  View details →
+                </Link>
               </div>
             </motion.div>
           ))}
