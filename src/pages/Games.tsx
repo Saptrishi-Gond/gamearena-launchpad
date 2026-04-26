@@ -3,7 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, Lock } from "lucide-react";
 import ffImg from "@/assets/game-freefire.jpg";
 import bgmiImg from "@/assets/game-bgmi.jpg";
 import fcImg from "@/assets/game-fc.jpg";
@@ -11,14 +11,14 @@ import fcImg from "@/assets/game-fc.jpg";
 const CATS = ["All", "Battle Royale", "FPS", "Sports", "MOBA", "Racing", "Fighting"];
 
 const TILES = [
-  { slug: "freefire", title: "Free Fire", cat: "Battle Royale", img: ffImg, players: "12.4K" },
-  { slug: "bgmi", title: "BGMI", cat: "Battle Royale", img: bgmiImg, players: "8.7K" },
-  { slug: "fc", title: "FC Mobile", cat: "Sports", img: fcImg, players: "3.1K" },
-  { slug: "valorant", title: "Valorant", cat: "FPS", img: ffImg, players: "5.8K" },
-  { slug: "rocket", title: "Rocket League", cat: "Sports", img: bgmiImg, players: "2.3K" },
-  { slug: "dota", title: "Dota 2", cat: "MOBA", img: fcImg, players: "4.5K" },
-  { slug: "csgo", title: "CS:GO 2", cat: "FPS", img: ffImg, players: "9.1K" },
-  { slug: "sf", title: "Street Fighter", cat: "Fighting", img: bgmiImg, players: "1.8K" },
+  { slug: "freefire", title: "Free Fire", cat: "Battle Royale", img: ffImg, players: "12.4K", live: true },
+  { slug: "bgmi", title: "BGMI", cat: "Battle Royale", img: bgmiImg, players: "8.7K", live: true },
+  { slug: "fc", title: "FC Mobile", cat: "Sports", img: fcImg, players: "—", live: false },
+  { slug: "valorant", title: "Valorant", cat: "FPS", img: ffImg, players: "—", live: false },
+  { slug: "rocket", title: "Rocket League", cat: "Sports", img: bgmiImg, players: "—", live: false },
+  { slug: "dota", title: "Dota 2", cat: "MOBA", img: fcImg, players: "—", live: false },
+  { slug: "csgo", title: "CS:GO 2", cat: "FPS", img: ffImg, players: "—", live: false },
+  { slug: "sf", title: "Street Fighter", cat: "Fighting", img: bgmiImg, players: "—", live: false },
 ];
 
 export default function Games() {
@@ -87,28 +87,40 @@ export default function Games() {
 
         {/* Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filtered.map((t, i) => (
-            <motion.div
-              key={t.slug}
-              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ delay: i * 0.04 }}
-            >
-              <Link
-                to={`/games/${t.slug}`}
-                className="group block aspect-square relative rounded-xl overflow-hidden border border-border hover:border-primary/50 transition-all"
+          {filtered.map((t, i) => {
+            const Wrapper: any = t.live ? Link : "div";
+            const wrapperProps = t.live ? { to: `/games/${t.slug}` } : {};
+            return (
+              <motion.div
+                key={t.slug}
+                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ delay: i * 0.04 }}
               >
-                <img src={t.img} alt={t.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-                <div className="absolute top-3 right-3 px-2 py-1 rounded-full surface-2/80 backdrop-blur text-[10px] uppercase tracking-wider text-primary border border-primary/30">
-                  {t.players} live
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1">{t.cat}</div>
-                  <h3 className="font-display italic text-xl uppercase">{t.title}</h3>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+                <Wrapper
+                  {...wrapperProps}
+                  className={`group block aspect-square relative rounded-xl overflow-hidden border transition-all ${
+                    t.live ? "border-border hover:border-primary/50 cursor-pointer" : "border-border opacity-60 cursor-not-allowed"
+                  }`}
+                >
+                  <img src={t.img} alt={t.title} className={`w-full h-full object-cover transition-transform duration-500 ${t.live ? "group-hover:scale-110" : "grayscale"}`} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                  {t.live ? (
+                    <div className="absolute top-3 right-3 px-2 py-1 rounded-full surface-2/80 backdrop-blur text-[10px] uppercase tracking-wider text-primary border border-primary/30">
+                      {t.players} live
+                    </div>
+                  ) : (
+                    <div className="absolute top-3 right-3 px-2 py-1 rounded-full surface-2/80 backdrop-blur text-[10px] uppercase tracking-wider text-muted-foreground border border-border flex items-center gap-1">
+                      <Lock className="h-3 w-3" /> Soon
+                    </div>
+                  )}
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1">{t.cat}</div>
+                    <h3 className="font-display italic text-xl uppercase">{t.title}</h3>
+                  </div>
+                </Wrapper>
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 
