@@ -131,7 +131,15 @@ export default function TournamentDetail() {
           <div className="surface-1 border border-border rounded-xl p-5 sticky top-20">
             <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">Entry Fee</div>
             <div className="font-display text-3xl mb-4">FREE</div>
-            <button className="w-full pill-btn justify-center mb-3">Register Now</button>
+            <JoinTournamentButton
+              tournamentId={id ?? "demo"}
+              game="freefire"
+              entryFee={0}
+              title="Titan Clash Series: Season 5"
+              className="w-full pill-btn justify-center mb-3"
+            >
+              Register Now
+            </JoinTournamentButton>
             <button className="w-full pill-ghost justify-center">Add to Watchlist</button>
 
             <div className="mt-6 pt-6 border-t border-border space-y-3 text-sm">
