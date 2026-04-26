@@ -15,13 +15,15 @@ type Game = "freefire" | "bgmi" | "fc";
 interface Props {
   tournamentId: string;
   game?: Game;
-  entryFee?: number; // coins or 0 = free
+  entryFee?: number;
   title?: string;
   className?: string;
   children?: React.ReactNode;
 }
 
 const idSchema = z.string().trim().min(4, "ID too short").max(32, "ID too long").regex(/^[A-Za-z0-9_.-]+$/, "Letters, numbers, _ . - only");
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const isUuid = (v: string) => UUID_RE.test(v);
 
 export function JoinTournamentButton({ tournamentId, game, entryFee = 0, title, className, children }: Props) {
   const { user, loading } = useAuth();
@@ -32,18 +34,22 @@ export function JoinTournamentButton({ tournamentId, game, entryFee = 0, title, 
   const [coins, setCoins] = useState<number>(0);
   const [submitting, setSubmitting] = useState(false);
   const [joined, setJoined] = useState(false);
-  const [checking, setChecking] = useState(false);
 
-  // Check existing booking + load saved game id + wallet
   useEffect(() => {
     if (!user) return;
-    setChecking(true);
     (async () => {
-      const [bookingRes, profileRes] = await Promise.all([
-        supabase.from("bookings").select("id").eq("tournament_id", tournamentId).eq("user_id", user.id).maybeSingle(),
+      const tasks: Promise<any>[] = [
         supabase.from("profiles").select("game_id_freefire, game_id_bgmi, game_id_fc, wallet_coins").eq("id", user.id).maybeSingle(),
-      ]);
-      setJoined(!!bookingRes.data);
+      ];
+      if (isUuid(tournamentId)) {
+        tasks.unshift(
+          supabase.from("bookings").select("id").eq("tournament_id", tournamentId).eq("user_id", user.id).maybeSingle()
+        );
+      }
+      const results = await Promise.all(tasks);
+      const profileRes = results[results.length - 1];
+      if (isUuid(tournamentId)) setJoined(!!results[0]?.data);
+
       const p = profileRes.data as any;
       if (p) {
         setCoins(p.wallet_coins ?? 0);
@@ -56,7 +62,6 @@ export function JoinTournamentButton({ tournamentId, game, entryFee = 0, title, 
           setIgid(stored);
         }
       }
-      setChecking(false);
     })();
   }, [user, tournamentId, game]);
 
@@ -71,6 +76,22 @@ export function JoinTournamentButton({ tournamentId, game, entryFee = 0, title, 
     setOpen(true);
   };
 
+  // Resolve to a real tournament UUID. If demo id (e.g. "1"), pick the next open tournament for this game.
+  const resolveTournamentId = async (): Promise<string | null> => {
+    if (isUuid(tournamentId)) return tournamentId;
+    const q = supabase
+      .from("tournaments")
+      .select("id, game, slots_left, match_at, status")
+      .gt("slots_left", 0)
+      .in("status", ["upcoming", "live"])
+      .order("match_at", { ascending: true })
+      .limit(1);
+    if (game) q.eq("game", game);
+    const { data, error } = await q;
+    if (error || !data?.length) return null;
+    return data[0].id as string;
+  };
+
   const confirm = async () => {
     const parsed = idSchema.safeParse(igid);
     if (!parsed.success) {
@@ -81,13 +102,20 @@ export function JoinTournamentButton({ tournamentId, game, entryFee = 0, title, 
       toast.error("Not enough coins. Top up your wallet.");
       return;
     }
+
     setSubmitting(true);
+    const realId = await resolveTournamentId();
+    if (!realId) {
+      setSubmitting(false);
+      toast.error("No open tournaments right now. Check back soon!");
+      return;
+    }
+
     const { error } = await supabase.rpc("book_tournament", {
-      _tournament_id: tournamentId,
+      _tournament_id: realId,
       _in_game_id: parsed.data,
     });
 
-    // Persist game id back to profile for next time (best-effort)
     if (!error && game && parsed.data !== savedId) {
       const patch =
         game === "bgmi" ? { game_id_bgmi: parsed.data } :
@@ -121,10 +149,10 @@ export function JoinTournamentButton({ tournamentId, game, entryFee = 0, title, 
     <>
       <button
         onClick={openFlow}
-        disabled={loading || checking}
+        disabled={loading}
         className={className ?? "w-full py-2.5 rounded-full text-sm font-semibold bg-primary text-primary-foreground hover:brightness-110 hover:shadow-glow transition-all disabled:opacity-60"}
       >
-        {checking ? <Loader2 className="h-4 w-4 animate-spin inline" /> : (children ?? "Join Now")}
+        {children ?? "Join Now"}
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
