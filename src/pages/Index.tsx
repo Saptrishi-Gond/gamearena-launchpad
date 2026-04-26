@@ -3,22 +3,22 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Trophy, Star, Zap, Crown, Shield, Quote } from "lucide-react";
+import { ArrowRight, Trophy, Star, Zap, Crown, Shield, Quote, CheckCircle2, Gift, Users, Lock, Sparkles } from "lucide-react";
 import ffImg from "@/assets/game-freefire.jpg";
 import bgmiImg from "@/assets/game-bgmi.jpg";
 import fcImg from "@/assets/game-fc.jpg";
 
 const portals = [
-  { slug: "freefire", title: "Free Fire Elite", img: ffImg, tag: "Battle Royale" },
-  { slug: "bgmi", title: "BGMI Masters", img: bgmiImg, tag: "Tactical FPS" },
-  { slug: "fc", title: "FC Pro League", img: fcImg, tag: "1v1 Football" },
+  { slug: "freefire", title: "Free Fire", img: ffImg, tag: "Battle Royale", live: true, players: "12.4K" },
+  { slug: "bgmi", title: "BGMI", img: bgmiImg, tag: "Tactical FPS", live: true, players: "8.7K" },
+  { slug: "fc", title: "FC Mobile", img: fcImg, tag: "Coming Soon", live: false, players: "—" },
 ];
 
 const live = [
-  { title: "Titan Clash", code: "S5-FF", prize: "₹50K", time: "TONIGHT" },
-  { title: "Neon Strike", code: "NS-BGMI", prize: "₹1.2L", time: "22 OCT" },
-  { title: "Vortex Open", code: "VO-FC", prize: "₹75K", time: "TOMORROW" },
-  { title: "Iron Fist", code: "IF-FF", prize: "₹30K", time: "FRI 9PM" },
+  { title: "Quick Cup · Free Fire", code: "11 AM · ₹29 ENTRY", prize: "TOP 3 WIN", time: "FILLING" },
+  { title: "Solo Showdown · FF", code: "2 PM · ₹49 ENTRY", prize: "TOP 5 WIN", time: "OPEN" },
+  { title: "Duo Drop · BGMI", code: "5 PM · ₹59 ENTRY", prize: "TOP 5 WIN", time: "HOT" },
+  { title: "Prime Squad · BGMI", code: "9 PM · ₹99 ENTRY", prize: "MVP BONUS", time: "TONIGHT" },
 ];
 
 const steps = [
@@ -56,9 +56,9 @@ export default function Index() {
         <div className="container py-24 md:py-32 text-center">
           <motion.div
             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-            className="inline-block text-[11px] uppercase tracking-[0.4em] text-muted-foreground mb-5"
+            className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.4em] text-primary mb-5 px-3 py-1 rounded-full border border-primary/30 bg-primary/10"
           >
-            ── Underground Series ──
+            <Sparkles className="h-3 w-3" /> Launch Season · Day 1
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
@@ -70,26 +70,41 @@ export default function Index() {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
             className="mt-6 text-base md:text-lg text-muted-foreground max-w-xl mx-auto"
           >
-            Choose your arena. Book tournaments. Win rewards. Rise to glory.
+            Join daily Free Fire and BGMI tournaments. Win real rewards. Build your rank.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
             className="mt-8 flex flex-wrap items-center justify-center gap-3"
           >
-            <Link to="/games" className="pill-btn">Explore Games</Link>
-            <Link to="/auth?mode=signup" className="pill-ghost">Join Free</Link>
-            <Link to="/leaderboard" className="pill-ghost">Watch Live</Link>
+            <Link to="/auth?mode=signup" className="pill-btn">
+              <Gift className="h-4 w-4" /> Claim Welcome Reward
+            </Link>
+            <Link to="/games/freefire" className="pill-ghost">Join Now</Link>
+            <Link to="/leaderboard" className="pill-ghost">View Live Matches</Link>
           </motion.div>
 
-          <div className="mt-14 grid grid-cols-4 gap-6 max-w-2xl mx-auto">
+          {/* Trust strip */}
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
+            className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] uppercase tracking-[0.2em] text-muted-foreground"
+          >
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-primary" /> 85% Prize Payout</span>
+            <span className="flex items-center gap-1.5"><Lock className="h-3.5 w-3.5 text-primary" /> Secure Payments</span>
+            <span className="flex items-center gap-1.5"><Trophy className="h-3.5 w-3.5 text-primary" /> Instant Winner Payout</span>
+          </motion.div>
+
+          <div className="mt-12 grid grid-cols-4 gap-6 max-w-2xl mx-auto">
             {[
-              { v: "50K+", l: "Players" },
-              { v: "₹5L+", l: "Rewards" },
-              { v: "12K+", l: "Matches" },
-              { v: "99%", l: "Trust" },
+              { v: "Live", l: "Joined Now", pulse: true },
+              { v: "₹29+", l: "Entry From" },
+              { v: "Daily", l: "Tournaments" },
+              { v: "85%", l: "Goes To Players" },
             ].map((s) => (
               <div key={s.l}>
-                <div className="font-display text-3xl md:text-4xl text-primary">{s.v}</div>
+                <div className="font-display text-2xl md:text-3xl text-primary flex items-center justify-center gap-1.5">
+                  {s.pulse && <span className="h-2 w-2 rounded-full bg-secondary animate-pulse" />}
+                  {s.v}
+                </div>
                 <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mt-1">{s.l}</div>
               </div>
             ))}
@@ -99,38 +114,67 @@ export default function Index() {
 
       {/* PORTALS */}
       <section className="container pb-16">
+        <div className="flex items-end justify-between mb-5">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.4em] text-primary mb-2">── Launch Lineup ──</div>
+            <h2 className="font-display italic text-3xl md:text-4xl uppercase">Pick Your Arena</h2>
+          </div>
+          <span className="text-[10px] uppercase tracking-widest text-muted-foreground">More games soon</span>
+        </div>
         <div className="grid md:grid-cols-3 gap-5">
-          {portals.map((p, i) => (
-            <motion.div
-              key={p.slug}
-              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <Link
-                to={`/games/${p.slug}`}
-                className="group relative block aspect-[4/5] rounded-xl overflow-hidden border border-border hover:border-primary/50 transition-all"
+          {portals.map((p, i) => {
+            const Wrapper: any = p.live ? Link : "div";
+            const wrapperProps = p.live ? { to: `/games/${p.slug}` } : {};
+            return (
+              <motion.div
+                key={p.slug}
+                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
               >
-                <img src={p.img} alt={p.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <div className="text-[10px] uppercase tracking-[0.3em] text-primary mb-2">{p.tag}</div>
-                  <h3 className="font-display italic text-3xl uppercase">{p.title}</h3>
-                  <div className="mt-3 inline-flex items-center gap-1.5 text-sm text-foreground/80 group-hover:text-primary transition-colors">
-                    Enter Arena <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                <Wrapper
+                  {...wrapperProps}
+                  className={`group relative block aspect-[4/5] rounded-xl overflow-hidden border transition-all ${
+                    p.live ? "border-border hover:border-primary/50 cursor-pointer" : "border-border opacity-60 cursor-not-allowed"
+                  }`}
+                >
+                  <img src={p.img} alt={p.title} className={`w-full h-full object-cover transition-transform duration-700 ${p.live ? "group-hover:scale-110" : "grayscale"}`} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+                  {p.live ? (
+                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-secondary/90 text-secondary-foreground text-[10px] uppercase tracking-widest font-bold flex items-center gap-1.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" /> Live
+                    </div>
+                  ) : (
+                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full surface-2/80 backdrop-blur text-[10px] uppercase tracking-widest font-bold flex items-center gap-1.5 border border-border">
+                      <Lock className="h-3 w-3" /> Soon
+                    </div>
+                  )}
+                  <div className="absolute top-3 right-3 px-2 py-1 rounded-full surface-2/80 backdrop-blur text-[10px] uppercase tracking-wider text-primary border border-primary/30 flex items-center gap-1">
+                    <Users className="h-3 w-3" /> {p.players}
                   </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <div className="text-[10px] uppercase tracking-[0.3em] text-primary mb-2">{p.tag}</div>
+                    <h3 className="font-display italic text-3xl uppercase">{p.title}</h3>
+                    {p.live ? (
+                      <div className="mt-3 inline-flex items-center gap-1.5 text-sm text-foreground/80 group-hover:text-primary transition-colors">
+                        Enter Arena <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    ) : (
+                      <div className="mt-3 text-xs text-muted-foreground uppercase tracking-wider">Coming in future season</div>
+                    )}
+                  </div>
+                </Wrapper>
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 
-      {/* LIVE TOURNAMENTS STRIP */}
+      {/* DAILY SCHEDULE STRIP */}
       <section className="container pb-20">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-secondary animate-pulse" />
-            <h2 className="font-display text-2xl uppercase tracking-wide">Live Tournaments</h2>
+            <h2 className="font-display text-2xl uppercase tracking-wide">Today's Schedule</h2>
           </div>
           <Link to="/games/freefire" className="text-xs uppercase tracking-wider text-primary hover:underline">View All →</Link>
         </div>
