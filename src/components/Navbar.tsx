@@ -1,6 +1,9 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Search, User as UserIcon, LogOut, Gift, MessageSquare, Shield } from "lucide-react";
+import {
+  Search, User as UserIcon, LogOut, Gift, MessageSquare, Shield,
+  Home, Trophy, Crown, Users, Swords
+} from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger
@@ -8,12 +11,11 @@ import {
 import { NotificationsBell } from "@/components/NotificationsBell";
 
 const NAV = [
-  { to: "/", label: "Home", end: true },
-  { to: "/games", label: "Games" },
-  { to: "/games/freefire", label: "Tournaments" },
-  { to: "/leaderboard", label: "Rankings" },
-  { to: "/rewards", label: "Rewards" },
-  { to: "/support", label: "Community" },
+  { to: "/", label: "Home", icon: Home, end: true },
+  { to: "/games/freefire", label: "Free Fire", icon: Swords },
+  { to: "/games/bgmi", label: "BGMI", icon: Trophy },
+  { to: "/leaderboard", label: "Rankings", icon: Crown },
+  { to: "/support", label: "Community", icon: Users },
 ];
 
 export const Navbar = () => {
@@ -32,20 +34,21 @@ export const Navbar = () => {
           </span>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-7 text-[13px] font-semibold uppercase tracking-[0.12em]">
+        <nav className="hidden lg:flex items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.12em]">
           {NAV.map((n) => (
             <NavLink
               key={n.to}
               to={n.to}
               end={n.end}
               className={({ isActive }) =>
-                `relative py-1.5 transition-colors ${
+                `flex items-center gap-1.5 px-3 py-2 rounded-full transition-colors ${
                   isActive
-                    ? "text-primary after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-0.5 after:bg-primary"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
                 }`
               }
             >
+              <n.icon className="h-3.5 w-3.5" />
               {n.label}
             </NavLink>
           ))}
@@ -87,7 +90,7 @@ export const Navbar = () => {
           ) : (
             <>
               <button onClick={() => navigate("/auth")} className="pill-ghost hidden sm:inline-flex">Login</button>
-              <button onClick={() => navigate("/auth?mode=signup")} className="pill-btn">Join Pro</button>
+              <button onClick={() => navigate("/auth?mode=signup")} className="pill-btn">Play Now</button>
             </>
           )}
         </div>
