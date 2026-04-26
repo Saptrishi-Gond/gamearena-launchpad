@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { JoinTournamentButton } from "@/components/JoinTournamentButton";
 import { motion } from "framer-motion";
 import { Calendar, Trophy, Users, Coins, MapPin, Clock, Zap } from "lucide-react";
 import ffImg from "@/assets/game-freefire.jpg";
