@@ -38,17 +38,15 @@ export function JoinTournamentButton({ tournamentId, game, entryFee = 0, title, 
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const tasks: Promise<any>[] = [
-        supabase.from("profiles").select("game_id_freefire, game_id_bgmi, game_id_fc, wallet_coins").eq("id", user.id).maybeSingle(),
-      ];
-      if (isUuid(tournamentId)) {
-        tasks.unshift(
-          supabase.from("bookings").select("id").eq("tournament_id", tournamentId).eq("user_id", user.id).maybeSingle()
-        );
-      }
-      const results = await Promise.all(tasks);
-      const profileRes = results[results.length - 1];
-      if (isUuid(tournamentId)) setJoined(!!results[0]?.data);
+      const profilePromise = Promise.resolve(
+        supabase.from("profiles").select("game_id_freefire, game_id_bgmi, game_id_fc, wallet_coins").eq("id", user.id).maybeSingle()
+      );
+      const bookingPromise = isUuid(tournamentId)
+        ? Promise.resolve(supabase.from("bookings").select("id").eq("tournament_id", tournamentId).eq("user_id", user.id).maybeSingle())
+        : Promise.resolve({ data: null });
+
+      const [profileRes, bookingRes] = await Promise.all([profilePromise, bookingPromise]);
+      if (isUuid(tournamentId)) setJoined(!!(bookingRes as any)?.data);
 
       const p = profileRes.data as any;
       if (p) {
