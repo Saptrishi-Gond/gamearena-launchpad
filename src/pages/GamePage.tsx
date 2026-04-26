@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { JoinTournamentButton } from "@/components/JoinTournamentButton";
 import { motion } from "framer-motion";
 import {
   BarChart3, Trophy, Search, SlidersHorizontal, Calendar, Users, X,
